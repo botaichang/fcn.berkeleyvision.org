@@ -4,6 +4,7 @@ from PIL import Image
 import _init_paths
 
 import caffe
+import time
 
 # load image, switch to BGR, subtract mean, and make dims C x H x W for Caffe
 im = Image.open('data/pascal/VOC2012/JPEGImages/2007_000129.jpg')
@@ -18,7 +19,11 @@ net = caffe.Net('voc-fcn8s/deploy.prototxt', 'voc-fcn8s/fcn8s-heavy-pascal.caffe
 net.blobs['data'].reshape(1, *in_.shape)
 net.blobs['data'].data[...] = in_
 # run net and take argmax for prediction
+raw_input('start timer')
+start_time = time.time()
 net.forward()
+total_time = time.time() - start_time
+print "total_time:", total_time
 out = net.blobs['score'].data[0].argmax(axis=0)
 
 #------------------------------------------
